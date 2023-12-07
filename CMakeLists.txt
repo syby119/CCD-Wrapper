@@ -228,7 +228,8 @@ if(CCD_WRAPPER_WITH_BENCHMARK)
     IF(NOT ${GMP_FOUND})
         MESSAGE(FATAL_ERROR "GMP not found! Needed by CCD Benchmark for reading rational query csv files.")
     ENDIF()
-    target_link_libraries(ccd_benchmark PUBLIC gmp::gmp)
+    target_include_directories(ccd_benchmark PUBLIC ${GMP_INCLUDE_DIR})
+    target_link_libraries(ccd_benchmark PUBLIC ${GMP_LIBRARIES})
 
     # Download Sample Queries
     include(sample_queries)

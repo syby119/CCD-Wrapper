@@ -8,8 +8,8 @@ message(STATUS "Third-party: creating target 'ccd_wrapper::rational_root_parity'
 include(FetchContent)
 FetchContent_Declare(
     rational_root_parity
-    GIT_REPOSITORY https://github.com/Continuous-Collision-Detection/Rational-Root-Parity.git
-    GIT_TAG 812f8cc6bdd6768b4a70291f411581c3544bb227
+    GIT_REPOSITORY https://github.com/syby119/Rational-Root-Parity.git
+    GIT_TAG 1a44ccd642dae045906fd89b71dbc89c6f1b9ba7
     GIT_SHALLOW FALSE
 )
 
