@@ -27,7 +27,7 @@ struct CLIArgs {
     std::vector<CCDMethod> methods;
     double minimum_separation = 0;
     double tight_inclusion_tolerance = 1e-6;
-    long tight_inclusion_max_iter = 1e6;
+    long tight_inclusion_max_iter = long(1e6);
     bool run_ee_dataset = true;
     bool run_vf_dataset = true;
     bool run_simulation_dataset = true;

@@ -46,7 +46,7 @@
 #endif
 // Custom inclusion based CCD of [Wang et al. 2020]
 #if CCD_WRAPPER_WITH_TIGHT_INCLUSION
-#include <tight_inclusion/inclusion_ccd.hpp>
+#include <tight_inclusion/ccd.hpp>
 #endif
 
 namespace ccd {
@@ -64,7 +64,7 @@ bool vertexFaceCCD(
     const CCDMethod method,
     const double tolerance,
     const long max_iter,
-    const std::array<double, 3>& err)
+    const Eigen::Array3d& err)
 {
     double toi; // Computed by some methods but never returned
     try {
@@ -298,7 +298,7 @@ bool edgeEdgeCCD(
     const CCDMethod method,
     const double tolerance,
     const long max_iter,
-    const std::array<double, 3>& err)
+    const Eigen::Array3d& err)
 {
     double toi; // Computed by some methods but never returned
     try {
@@ -535,7 +535,7 @@ bool vertexFaceMSCCD(
     const CCDMethod method,
     const double tolerance,
     const long max_iter,
-    const std::array<double, 3>& err)
+    const Eigen::Array3d& err)
 {
     double toi; // Computed by some methods but never returned
     try {
@@ -564,14 +564,15 @@ bool vertexFaceMSCCD(
 #endif
 
         case CCDMethod::TIGHT_INCLUSION:
-#if CCD_WRAPPER_WITH_TIGHT_INCLUSION
+#if CCD_WRAPPER_WITH_TIGHT_INCLUSION                                           \
+    && defined(TIGHT_INCLUSION_WITH_DOUBLE_PRECISION)
         {
             double output_tolerance;
             const double t_max = 1.0;
             // 0: normal ccd method which only checks t = [0,1]
             // 1: ccd with max_itr and t=[0, t_max]
             const int CCD_TYPE = 1;
-            return inclusion_ccd::vertexFaceCCD_double(
+            return ticcd::vertexFaceCCD(
                 // Point at t=0
                 vertex_start,
                 // Triangle at t = 0
@@ -622,7 +623,7 @@ bool edgeEdgeMSCCD(
     const CCDMethod method,
     const double tolerance,
     const long max_iter,
-    const std::array<double, 3>& err)
+    const Eigen::Array3d& err)
 {
     double toi; // Computed by some methods but never returned
     try {
@@ -650,14 +651,16 @@ bool edgeEdgeMSCCD(
 #endif
 
         case CCDMethod::TIGHT_INCLUSION:
-#if CCD_WRAPPER_WITH_TIGHT_INCLUSION
+#if CCD_WRAPPER_WITH_TIGHT_INCLUSION                                           \
+    && defined(TIGHT_INCLUSION_WITH_DOUBLE_PRECISION)
         {
             double output_tolerance;
             const double t_max = 1.0;
             // 0: normal ccd method which only checks t = [0,1]
             // 1: ccd with max_itr and t=[0, t_max]
             const int CCD_TYPE = 1;
-            return inclusion_ccd::edgeEdgeCCD_double(
+            ticcd::Array3 err;
+            return ticcd::edgeEdgeCCD(
                 // Edge 1 at t=0
                 edge0_vertex0_start, edge0_vertex1_start,
                 // Edge 2 at t=0
@@ -694,4 +697,190 @@ bool edgeEdgeMSCCD(
     }
 }
 
+} // namespace ccd
+
+namespace ccd {
+bool vertexFaceCCD(
+    const Eigen::Vector3f& vertex_start,
+    const Eigen::Vector3f& face_vertex0_start,
+    const Eigen::Vector3f& face_vertex1_start,
+    const Eigen::Vector3f& face_vertex2_start,
+    const Eigen::Vector3f& vertex_end,
+    const Eigen::Vector3f& face_vertex0_end,
+    const Eigen::Vector3f& face_vertex1_end,
+    const Eigen::Vector3f& face_vertex2_end,
+    const CCDMethod method,
+    const float tolerance,
+    const long max_iter,
+    const Eigen::Array3f& err)
+{
+    switch (method) {
+    case CCDMethod::TIGHT_INCLUSION:
+        // Call the MSCCD function for these to remove duplicate code
+        return vertexFaceMSCCD(
+            // Point at t=0
+            vertex_start,
+            // Triangle at t = 0
+            face_vertex0_start, face_vertex1_start, face_vertex2_start,
+            // Point at t=1
+            vertex_end,
+            // Triangle at t = 1
+            face_vertex0_end, face_vertex1_end, face_vertex2_end,
+            /*minimum_distance=*/0, method, tolerance, max_iter, err);
+    }
+
+    throw "Unimplemented";
+}
+
+bool edgeEdgeCCD(
+    const Eigen::Vector3f& edge0_vertex0_start,
+    const Eigen::Vector3f& edge0_vertex1_start,
+    const Eigen::Vector3f& edge1_vertex0_start,
+    const Eigen::Vector3f& edge1_vertex1_start,
+    const Eigen::Vector3f& edge0_vertex0_end,
+    const Eigen::Vector3f& edge0_vertex1_end,
+    const Eigen::Vector3f& edge1_vertex0_end,
+    const Eigen::Vector3f& edge1_vertex1_end,
+    const CCDMethod method,
+    const float tolerance,
+    const long max_iter,
+    const Eigen::Array3f& err)
+{
+    return edgeEdgeMSCCD(
+        // Edge 1 at t=0
+        edge0_vertex0_start, edge0_vertex1_start,
+        // Edge 2 at t=0
+        edge1_vertex0_start, edge1_vertex1_start,
+        // Edge 1 at t=1
+        edge0_vertex0_end, edge0_vertex1_end,
+        // Edge 2 at t=1
+        edge1_vertex0_end, edge1_vertex1_end,
+        /*minimum_distance=*/0, method, tolerance, max_iter, err);
+}
+
+bool vertexFaceMSCCD(
+    const Eigen::Vector3f& vertex_start,
+    const Eigen::Vector3f& face_vertex0_start,
+    const Eigen::Vector3f& face_vertex1_start,
+    const Eigen::Vector3f& face_vertex2_start,
+    const Eigen::Vector3f& vertex_end,
+    const Eigen::Vector3f& face_vertex0_end,
+    const Eigen::Vector3f& face_vertex1_end,
+    const Eigen::Vector3f& face_vertex2_end,
+    const float min_distance,
+    const CCDMethod method,
+    const float tolerance,
+    const long max_iter,
+    const Eigen::Array3f& err)
+{
+    float toi; // Computed by some methods but never returned
+
+    try {
+        switch (method) {
+        case CCDMethod::TIGHT_INCLUSION:
+#if CCD_WRAPPER_WITH_TIGHT_INCLUSION && !defined(TIGHT_INCLUSION_WITH_DOUBLE_PRECISION)
+        {
+            double output_tolerance;
+            const double t_max = 1.0;
+            // 0: normal ccd method which only checks t = [0,1]
+            // 1: ccd with max_itr and t=[0, t_max]
+            const int CCD_TYPE = 1;
+            return ticcd::vertexFaceCCD(
+                // Point at t=0
+                vertex_start,
+                // Triangle at t = 0
+                face_vertex0_start, face_vertex1_start, face_vertex2_start,
+                // Point at t=1
+                vertex_end,
+                // Triangle at t = 1
+                face_vertex0_end, face_vertex1_end, face_vertex2_end,
+                err,              // rounding error
+                min_distance,     // minimum separation distance
+                toi,              // time of impact
+                tolerance,        // delta
+                t_max,            // Maximum time to check
+                max_iter,         // Maximum number of iterations
+                output_tolerance, // delta_actual
+                CCD_TYPE);
+        }
+#else
+            throw "CCD method is not enabled";
+#endif
+        default:
+            throw "Invalid Minimum Separation CCDMethod";
+        }
+    } catch (const char* err) {
+        // Conservative answer upon failure.
+        std::cerr << "Vertex-face CCD failed because \"" << err << "\" for "
+                  << method_names[method] << std::endl;
+        return true;
+    } catch (...) {
+        // Conservative answer upon failure.
+        std::cerr << "Vertex-face CCD failed for unknown reason when using "
+                  << method_names[method] << std::endl;
+        return true;
+    }
+}
+
+bool edgeEdgeMSCCD(
+    const Eigen::Vector3f& edge0_vertex0_start,
+    const Eigen::Vector3f& edge0_vertex1_start,
+    const Eigen::Vector3f& edge1_vertex0_start,
+    const Eigen::Vector3f& edge1_vertex1_start,
+    const Eigen::Vector3f& edge0_vertex0_end,
+    const Eigen::Vector3f& edge0_vertex1_end,
+    const Eigen::Vector3f& edge1_vertex0_end,
+    const Eigen::Vector3f& edge1_vertex1_end,
+    const float min_distance,
+    const CCDMethod method,
+    const float tolerance,
+    const long max_iter,
+    const Eigen::Array3f& err)
+{
+    float toi; // Computed by some methods but never returned
+    try {
+        switch (method) {
+        case CCDMethod::TIGHT_INCLUSION:
+#if CCD_WRAPPER_WITH_TIGHT_INCLUSION && !defined(TIGHT_INCLUSION_WITH_DOUBLE_PRECISION)
+        {
+            float output_tolerance;
+            const float t_max = 1.0f;
+            // 0: normal ccd method which only checks t = [0,1]
+            // 1: ccd with max_itr and t=[0, t_max]
+            const int CCD_TYPE = 1;
+            ticcd::Array3 err;
+            return ticcd::edgeEdgeCCD(
+                // Edge 1 at t=0
+                edge0_vertex0_start, edge0_vertex1_start,
+                // Edge 2 at t=0
+                edge1_vertex0_start, edge1_vertex1_start,
+                // Edge 1 at t=1
+                edge0_vertex0_end, edge0_vertex1_end,
+                // Edge 2 at t=1
+                edge1_vertex0_end, edge1_vertex1_end,
+                err,              // rounding error
+                min_distance,     // minimum separation distance
+                toi,              // time of impact
+                tolerance,        // delta
+                t_max,            // Maximum time to check
+                max_iter,         // Maximum number of iterations
+                output_tolerance, // delta_actual
+                CCD_TYPE);
+        }
+#else
+            throw "CCD method is not enabled";
+#endif
+        default:
+            throw "Invalid Minimum Separation CCDMethod";
+        }
+    } catch (const char* err) {
+        // Conservative answer upon failure.
+        std::cerr << "Edge-edge CCD failed because \"" << err << "\" for " << method_names[method] << std::endl;
+        return true;
+    } catch (...) {
+        // Conservative answer upon failure.
+        std::cerr << "Edge-edge CCD failed for unknown reason when using " << method_names[method] << std::endl;
+        return true;
+    }
+}
 } // namespace ccd

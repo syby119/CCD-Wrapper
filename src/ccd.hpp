@@ -91,8 +91,8 @@ bool vertexFaceCCD(
     const Eigen::Vector3d& face_vertex2_end,
     const CCDMethod method,
     const double tolerance = 1e-6,
-    const long max_iter = 1e6,
-    const std::array<double, 3>& err = { { -1, 0, 0 } });
+    const long max_iter = 1'000'000,
+    const Eigen::Array3d& err = { -1, 0, 0 });
 
 /**
  * @brief Detect collisions between two edges as they move.
@@ -131,8 +131,8 @@ bool edgeEdgeCCD(
     const Eigen::Vector3d& edge1_vertex1_end,
     const CCDMethod method,
     const double tolerance = 1e-6,
-    const long max_iter = 1e6,
-    const std::array<double, 3>& err = { { -1, 0, 0 } });
+    const long max_iter = 1'000'000,
+    const Eigen::Array3d& err = { -1, 0, 0 });
 
 /**
  * @brief Detect proximity collisions between a vertex and a triangular face.
@@ -170,8 +170,8 @@ bool vertexFaceMSCCD(
     const double min_distance,
     const CCDMethod method,
     const double tolerance = 1e-6,
-    const long max_iter = 1e6,
-    const std::array<double, 3>& err = { { -1, 0, 0 } });
+    const long max_iter = 1'000'000,
+    const Eigen::Array3d& err = { -1, 0, 0 });
 
 /**
  * @brief Detect proximity collisions between two edges as they move.
@@ -211,9 +211,73 @@ bool edgeEdgeMSCCD(
     const double min_distance,
     const CCDMethod method,
     const double tolerance = 1e-6,
-    const long max_iter = 1e6,
-    const std::array<double, 3>& err = { { -1, 0, 0 } });
+    const long max_iter = 1'000'000,
+    const Eigen::Array3d& err = { -1, 0, 0 });
+}
 
+namespace ccd {
+// float version
+
+bool vertexFaceCCD(
+    const Eigen::Vector3f& vertex_start,
+    const Eigen::Vector3f& face_vertex0_start,
+    const Eigen::Vector3f& face_vertex1_start,
+    const Eigen::Vector3f& face_vertex2_start,
+    const Eigen::Vector3f& vertex_end,
+    const Eigen::Vector3f& face_vertex0_end,
+    const Eigen::Vector3f& face_vertex1_end,
+    const Eigen::Vector3f& face_vertex2_end,
+    const CCDMethod method,
+    const float tolerance = 1e-6f,
+    const long max_iter = 1'000'000,
+    const Eigen::Array3f& err = { -1, 0, 0 });
+
+bool edgeEdgeCCD(
+    const Eigen::Vector3f& edge0_vertex0_start,
+    const Eigen::Vector3f& edge0_vertex1_start,
+    const Eigen::Vector3f& edge1_vertex0_start,
+    const Eigen::Vector3f& edge1_vertex1_start,
+    const Eigen::Vector3f& edge0_vertex0_end,
+    const Eigen::Vector3f& edge0_vertex1_end,
+    const Eigen::Vector3f& edge1_vertex0_end,
+    const Eigen::Vector3f& edge1_vertex1_end,
+    const CCDMethod method,
+    const float tolerance = 1e-6f,
+    const long max_iter = 1'000'000,
+    const Eigen::Array3f& err = { -1, 0, 0 });
+
+bool vertexFaceMSCCD(
+    const Eigen::Vector3f& vertex_start,
+    const Eigen::Vector3f& face_vertex0_start,
+    const Eigen::Vector3f& face_vertex1_start,
+    const Eigen::Vector3f& face_vertex2_start,
+    const Eigen::Vector3f& vertex_end,
+    const Eigen::Vector3f& face_vertex0_end,
+    const Eigen::Vector3f& face_vertex1_end,
+    const Eigen::Vector3f& face_vertex2_end,
+    const float min_distance,
+    const CCDMethod method,
+    const float tolerance = 1e-6f,
+    const long max_iter = 1'000'000,
+    const Eigen::Array3f& err = { -1, 0, 0 });
+
+bool edgeEdgeMSCCD(
+    const Eigen::Vector3f& edge0_vertex0_start,
+    const Eigen::Vector3f& edge0_vertex1_start,
+    const Eigen::Vector3f& edge1_vertex0_start,
+    const Eigen::Vector3f& edge1_vertex1_start,
+    const Eigen::Vector3f& edge0_vertex0_end,
+    const Eigen::Vector3f& edge0_vertex1_end,
+    const Eigen::Vector3f& edge1_vertex0_end,
+    const Eigen::Vector3f& edge1_vertex1_end,
+    const float min_distance,
+    const CCDMethod method,
+    const float tolerance = 1e-6f,
+    const long max_iter = 1'000'000,
+    const Eigen::Array3f& err = { -1, 0, 0 });
+}
+
+namespace ccd{
 inline bool is_minimum_separation_method(const CCDMethod& method)
 {
     switch (method) {
