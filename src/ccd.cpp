@@ -274,13 +274,11 @@ bool vertexFaceCCD(
         }
     } catch (const char* err) {
         // Conservative answer upon failure.
-        std::cerr << "Vertex-face CCD failed because \"" << err << "\" for "
-                  << method_names[method] << std::endl;
+        std::cerr << "Vertex-face CCD failed because \"" << err << "\" for " << method_names[method] << std::endl;
         return true;
     } catch (...) {
         // Conservative answer upon failure.
-        std::cerr << "Vertex-face CCD failed for unknown reason when using "
-                  << method_names[method] << std::endl;
+        std::cerr << "Vertex-face CCD failed for unknown reason when using " << method_names[method] << std::endl;
         return true;
     }
 }
@@ -510,13 +508,11 @@ bool edgeEdgeCCD(
         }
     } catch (const char* err) {
         // Conservative answer upon failure.
-        std::cerr << "Edge-edge CCD failed because \"" << err << "\" for "
-                  << method_names[method] << std::endl;
+        std::cerr << "Edge-edge CCD failed because \"" << err << "\" for " << method_names[method] << std::endl;
         return true;
     } catch (...) {
         // Conservative answer upon failure.
-        std::cerr << "Edge-edge CCD failed for unknown reason when using "
-                  << method_names[method] << std::endl;
+        std::cerr << "Edge-edge CCD failed for unknown reason when using " << method_names[method] << std::endl;
         return true;
     }
 }
@@ -564,8 +560,7 @@ bool vertexFaceMSCCD(
 #endif
 
         case CCDMethod::TIGHT_INCLUSION:
-#if CCD_WRAPPER_WITH_TIGHT_INCLUSION                                           \
-    && defined(TIGHT_INCLUSION_WITH_DOUBLE_PRECISION)
+#if CCD_WRAPPER_WITH_TIGHT_INCLUSION && defined(TIGHT_INCLUSION_WITH_DOUBLE_PRECISION)
         {
             double output_tolerance;
             const double t_max = 1.0;
@@ -598,13 +593,11 @@ bool vertexFaceMSCCD(
         }
     } catch (const char* err) {
         // Conservative answer upon failure.
-        std::cerr << "Vertex-face CCD failed because \"" << err << "\" for "
-                  << method_names[method] << std::endl;
+        std::cerr << "Vertex-face CCD failed because \"" << err << "\" for " << method_names[method] << std::endl;
         return true;
     } catch (...) {
         // Conservative answer upon failure.
-        std::cerr << "Vertex-face CCD failed for unknown reason when using "
-                  << method_names[method] << std::endl;
+        std::cerr << "Vertex-face CCD failed for unknown reason when using " << method_names[method] << std::endl;
         return true;
     }
 }
@@ -651,8 +644,7 @@ bool edgeEdgeMSCCD(
 #endif
 
         case CCDMethod::TIGHT_INCLUSION:
-#if CCD_WRAPPER_WITH_TIGHT_INCLUSION                                           \
-    && defined(TIGHT_INCLUSION_WITH_DOUBLE_PRECISION)
+#if CCD_WRAPPER_WITH_TIGHT_INCLUSION && defined(TIGHT_INCLUSION_WITH_DOUBLE_PRECISION)
         {
             double output_tolerance;
             const double t_max = 1.0;
@@ -686,13 +678,11 @@ bool edgeEdgeMSCCD(
         }
     } catch (const char* err) {
         // Conservative answer upon failure.
-        std::cerr << "Edge-edge CCD failed because \"" << err << "\" for "
-                  << method_names[method] << std::endl;
+        std::cerr << "Edge-edge CCD failed because \"" << err << "\" for " << method_names[method] << std::endl;
         return true;
     } catch (...) {
         // Conservative answer upon failure.
-        std::cerr << "Edge-edge CCD failed for unknown reason when using "
-                  << method_names[method] << std::endl;
+        std::cerr << "Edge-edge CCD failed for unknown reason when using " << method_names[method] << std::endl;
         return true;
     }
 }
@@ -780,8 +770,8 @@ bool vertexFaceMSCCD(
         case CCDMethod::TIGHT_INCLUSION:
 #if CCD_WRAPPER_WITH_TIGHT_INCLUSION && !defined(TIGHT_INCLUSION_WITH_DOUBLE_PRECISION)
         {
-            double output_tolerance;
-            const double t_max = 1.0;
+            float output_tolerance;
+            const float t_max = 1.0f;
             // 0: normal ccd method which only checks t = [0,1]
             // 1: ccd with max_itr and t=[0, t_max]
             const int CCD_TYPE = 1;
@@ -811,13 +801,11 @@ bool vertexFaceMSCCD(
         }
     } catch (const char* err) {
         // Conservative answer upon failure.
-        std::cerr << "Vertex-face CCD failed because \"" << err << "\" for "
-                  << method_names[method] << std::endl;
+        std::cerr << "Vertex-face CCD failed because \"" << err << "\" for " << method_names[method] << std::endl;
         return true;
     } catch (...) {
         // Conservative answer upon failure.
-        std::cerr << "Vertex-face CCD failed for unknown reason when using "
-                  << method_names[method] << std::endl;
+        std::cerr << "Vertex-face CCD failed for unknown reason when using " << method_names[method] << std::endl;
         return true;
     }
 }
