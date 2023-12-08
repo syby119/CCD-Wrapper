@@ -15,8 +15,8 @@ OPTION(TIGHT_INCLUSION_LIMIT_QUEUE_SIZE      "Enable limitation of maximal queue
 include(FetchContent)
 FetchContent_Declare(
     tight_inclusion
-    GIT_REPOSITORY https://github.com/Continuous-Collision-Detection/Tight-Inclusion.git
-    GIT_TAG f1c66b40086377ac81b1283b88652ad855838325
+    GIT_REPOSITORY https://github.com/syby119/Tight-Inclusion.git
+    GIT_TAG 4b3603b8ef7156dc6d56deb806c46e2326fd3d91
     GIT_SHALLOW FALSE
 )
 
